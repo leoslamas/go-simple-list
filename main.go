@@ -30,24 +30,15 @@ func main() {
 
 	myList.Pop()
 	printList(myList)
+
 }
 
 func printList(myList *list.LinkedList) {
 	println("Size: ", myList.Size())
 	
-	if value, ok := myList.Get(0).(int); ok {
-		println("List get(0): ", value)
-	}
-
-	if value, ok := myList.Get(1).(int); ok {
-		println("List get(1): ", value)
-	}
-
-	if value, ok := myList.Get(2).(int); ok {
-		println("List get(2): ", value)
-	}
-
-	if value, ok := myList.Get(3).(int); ok {
-		println("List get(3): ", value)
+	for val := range myList.Iter() {
+		if value, ok := val.(int); ok {
+			println("List Get: ", value)
+		}
 	}
 }

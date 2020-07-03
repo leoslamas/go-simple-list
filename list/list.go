@@ -126,3 +126,16 @@ func (list *LinkedList) Del(index int) {
 		counter++;
 	}
 }
+
+// Iter returns a channel to iterate using `for ... range`
+func (list *LinkedList) Iter() chan interface{} {
+	var channel = make(chan interface{}, list.Size())
+	defer close(channel)
+
+	for i:=0; i<list.Size(); i++ {
+		channel <- list.Get(i)
+	}
+
+	return channel
+}
+ 

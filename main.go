@@ -1,7 +1,7 @@
 package main
 
 import (
-	"go-tests/list"
+	"go-list/list"
 )
 
 func main() {

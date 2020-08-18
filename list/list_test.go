@@ -115,7 +115,7 @@ func BenchmarkLinkedList_Add(b *testing.B) {
 	}
 }
 
-func BenchmarkLinkedList_Get(b *testing.B) {
+func BenchmarkLinkedList_Add_Get(b *testing.B) {
 	myList := New()
 
 	for i := 0; i < b.N; i++ {
@@ -127,7 +127,7 @@ func BenchmarkLinkedList_Get(b *testing.B) {
 	}
 }
 
-func BenchmarkLinkedList_Size(b *testing.B) {
+func BenchmarkLinkedList_Add_Size(b *testing.B) {
 	myList := New()
 	var x int64
 
@@ -140,7 +140,7 @@ func BenchmarkLinkedList_Size(b *testing.B) {
 	}
 }
 
-func BenchmarkLinkedList_Pop(b *testing.B) {
+func BenchmarkLinkedList_Add_Pop(b *testing.B) {
 	myList := New()
 	var x int64
 
@@ -155,7 +155,7 @@ func BenchmarkLinkedList_Pop(b *testing.B) {
 	}
 }
 
-func BenchmarkLinkedList_Del(b *testing.B) {
+func BenchmarkLinkedList_Add_Del(b *testing.B) {
 	myList := New()
 
 	for i := 0; i < b.N; i++ {
@@ -168,14 +168,14 @@ func BenchmarkLinkedList_Del(b *testing.B) {
 }
 
 func BenchmarkLinkedList_Iter(b *testing.B) {
+	myList := New()
+	var x int64
+	
+	for i:=0; i<10000; i++ {
+		myList.Add(i)
+	}
 
 	for i := 0; i < b.N; i++ {
-		myList := New()
-		var x int64
-		
-		for i:=0; i<10000; i++ {
-			myList.Add(i)
-		}
 
 		for i := range myList.Iter() {
 			if val, ok := i.(int); ok {
@@ -186,14 +186,14 @@ func BenchmarkLinkedList_Iter(b *testing.B) {
 }
 
 func BenchmarkLinkedList_Iter2(b *testing.B) {
+	myList := New()
+	var x int64
+	
+	for i:=0; i<10000; i++ {
+		myList.Add(i)
+	}
 
 	for i := 0; i < b.N; i++ {
-		myList := New()
-		var x int64
-		
-		for i:=0; i<10000; i++ {
-			myList.Add(i)
-		}
 
 		for i := range myList.Iter2() {
 			if val, ok := i.(int); ok {

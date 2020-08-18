@@ -1,6 +1,6 @@
 # Simple Linked List
 
-## Running
+## Running example
 `go run main.go`
 
 ## Testing

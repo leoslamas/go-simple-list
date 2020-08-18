@@ -184,3 +184,21 @@ func BenchmarkLinkedList_Iter(b *testing.B) {
 		}
 	}
 }
+
+func BenchmarkLinkedList_Iter2(b *testing.B) {
+
+	for i := 0; i < b.N; i++ {
+		myList := New()
+		var x int64
+		
+		for i:=0; i<10000; i++ {
+			myList.Add(i)
+		}
+
+		for i := range myList.Iter2() {
+			if val, ok := i.(int); ok {
+				x += int64(val)
+			}
+		}
+	}
+}

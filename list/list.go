@@ -5,6 +5,29 @@ type node struct {
 	next  *node
 }
 
+type iterator struct {
+	node *node
+}
+
+func (i *iterator) hasNext() bool {
+	return i.node != nil && i.node.next != nil
+}
+
+func (i *iterator) next() *node {
+	if i.node != nil {
+		n := i.node.next
+		i.node = i.node.next
+		return n
+	}
+
+	return nil
+}
+
+func (list *LinkedList) newIter() *iterator {
+	node := &node{value: nil, next:list.head}
+	return &iterator{node: node}
+}
+
 // LinkedList is a collection of linked nodes
 type LinkedList struct {
 	head *node
@@ -126,9 +149,29 @@ func (list *LinkedList) Del(index int) {
 		counter++;
 	}
 }
-
-// Iter returns a channel to iterate using `for ... range`
+ 
+// Iter returns a channel to iterate using `for ... range` using an iterator.
 func (list *LinkedList) Iter() <-chan interface{} {
+	var channel = make(chan interface{}, list.Size())
+	defer close(channel)
+
+	var iter = list.newIter()
+
+	for{
+		if iter.hasNext() {
+			channel <- iter.next().value
+		} else {
+			break
+		}
+	}
+
+	return channel
+
+}
+
+// Iter2 returns a channel to iterate using `for ... range`
+// but it uses index, thus traversing the entire list for each element 
+func (list *LinkedList) Iter2() <-chan interface{} {
 	var channel = make(chan interface{}, list.Size())
 	defer close(channel)
 
@@ -138,4 +181,3 @@ func (list *LinkedList) Iter() <-chan interface{} {
 
 	return channel
 }
- 

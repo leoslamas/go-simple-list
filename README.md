@@ -1,5 +1,8 @@
 # Simple Linked List
 
+## Init
+`go mod download`
+
 ## Running example
 `go run main.go`
 

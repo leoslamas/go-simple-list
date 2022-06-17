@@ -1,19 +1,32 @@
 package list
 
-type node struct {
-	value interface{}
-	next  *node
+// LinkedList is a collection of linked nodes
+type LinkedList[T any] struct {
+	head *node[T]
 }
 
-type iterator struct {
-	node *node
+type node[T any] struct {
+	value T
+	next  *node[T]
 }
 
-func (i *iterator) hasNext() bool {
+type iterator[T any] struct {
+	node *node[T]
+}
+
+func zero[T any]() T {
+	return *new(T)
+}
+
+func isZero[T comparable](v T) bool {
+	return v == *new(T)
+}
+
+func (i *iterator[T]) hasNext() bool {
 	return i.node != nil && i.node.next != nil
 }
 
-func (i *iterator) next() *node {
+func (i *iterator[T]) next() *node[T] {
 	if i.node != nil {
 		n := i.node.next
 		i.node = i.node.next
@@ -23,23 +36,18 @@ func (i *iterator) next() *node {
 	return nil
 }
 
-func (list *LinkedList) newIter() *iterator {
-	node := &node{value: nil, next:list.head}
-	return &iterator{node: node}
-}
-
-// LinkedList is a collection of linked nodes
-type LinkedList struct {
-	head *node
+func (list *LinkedList[T]) newIter() *iterator[T] {
+	node := &node[T]{value: zero[T](), next: list.head}
+	return &iterator[T]{node: node}
 }
 
 // New creates a new list
-func New() *LinkedList {
-	return &LinkedList{}
+func New[T any]() *LinkedList[T] {
+	return &LinkedList[T]{}
 }
 
 // Size returns list length
-func (list LinkedList) Size() int {
+func (list LinkedList[T]) Size() int {
 	var tmp = list.head
 	var counter = 0
 
@@ -56,10 +64,10 @@ func (list LinkedList) Size() int {
 }
 
 // Add inserts an element into the list
-func (list *LinkedList) Add(item interface{}) {
+func (list *LinkedList[T]) Add(item T) {
 	var tmp = list.head
 
-	var node = &node{
+	var node = &node[T]{
 		value: item,
 		next:  nil,
 	}
@@ -81,12 +89,12 @@ func (list *LinkedList) Add(item interface{}) {
 }
 
 // Get returns an element by index
-func (list *LinkedList) Get(index int) interface{} {
+func (list *LinkedList[T]) Get(index int) T {
 	var tmp = list.head
 	var counter = 0
 
 	if tmp == nil {
-		return nil
+		return zero[T]()
 	}
 
 	if index == 0 && tmp != nil {
@@ -105,24 +113,27 @@ func (list *LinkedList) Get(index int) interface{} {
 		}
 	}
 
-	return nil
+	return zero[T]()
 }
 
 // Pop removes first element and returns its value
-func (list *LinkedList) Pop() interface{} {
+func (list *LinkedList[T]) Pop() T {
+	var value = zero[T]()
+
 	if list.head != nil {
+		value = list.head.value
 		list.head = list.head.next
 	}
 
-	return list.head
+	return value
 }
 
 // Del removes an element by index
-func (list *LinkedList) Del(index int) {
+func (list *LinkedList[T]) Del(index int) {
 	var tmp = list.head
-	var target *node
+	var target *node[T]
 	var counter = 0
-	
+
 	if index < 0 {
 		return
 	}
@@ -145,19 +156,19 @@ func (list *LinkedList) Del(index int) {
 			break
 		}
 
-		tmp = tmp.next;
-		counter++;
+		tmp = tmp.next
+		counter++
 	}
 }
- 
+
 // Iter returns a channel to iterate using `for ... range` using an iterator.
-func (list *LinkedList) Iter() <-chan interface{} {
-	var channel = make(chan interface{}, list.Size())
+func (list *LinkedList[T]) Iter() <-chan T {
+	var channel = make(chan T, list.Size())
 	defer close(channel)
 
 	var iter = list.newIter()
 
-	for{
+	for {
 		if iter.hasNext() {
 			channel <- iter.next().value
 		} else {
@@ -170,12 +181,12 @@ func (list *LinkedList) Iter() <-chan interface{} {
 }
 
 // Iter2 returns a channel to iterate using `for ... range`
-// but it uses index, thus traversing the entire list for each element 
-func (list *LinkedList) Iter2() <-chan interface{} {
-	var channel = make(chan interface{}, list.Size())
+// but it uses index, thus traversing the entire list for each element
+func (list *LinkedList[T]) Iter2() <-chan T {
+	var channel = make(chan T, list.Size())
 	defer close(channel)
 
-	for i:=0; i<list.Size(); i++ {
+	for i := 0; i < list.Size(); i++ {
 		channel <- list.Get(i)
 	}
 

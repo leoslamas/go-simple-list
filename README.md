@@ -1,5 +1,7 @@
 # Simple Linked List
 
+* `Go` version: 1.18+
+
 ## Init
 `go mod download`
 

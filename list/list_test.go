@@ -6,8 +6,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func setup() *LinkedList {
-	myList := New()
+func setup() *LinkedList[int] {
+	myList := New[int]()
 	myList.Add(1)
 	myList.Add(10)
 	myList.Add(100)
@@ -37,42 +37,42 @@ func TestLinkedList_Add(t *testing.T) {
 func TestLinkedList_Get(t *testing.T) {
 	myList := setup()
 
-	if value, ok := myList.Get(0).(int); ok {
-		assert.Equal(t, 1, value)
-	}
+	var value int
 
-	if value, ok := myList.Get(1).(int); ok {
-		assert.Equal(t, 10, value)
-	}
+	value = myList.Get(0)
+	assert.Equal(t, 1, value)
 
-	if value, ok := myList.Get(2).(int); ok {
-		assert.Equal(t, 100, value)
-	}
+	value = myList.Get(1)
+	assert.Equal(t, 10, value)
 
-	if _, ok := myList.Get(3).(int); ok {
+	value = myList.Get(2)
+	assert.Equal(t, 100, value)
+
+	if val := myList.Get(3); !isZero(val) {
 		t.FailNow()
 	}
-
 }
 
 func TestLinkedList_Pop(t *testing.T) {
 	myList := setup()
 
-	if pop, ok := myList.Pop().(int); ok {
-		assert.Equal(t, 1, pop)
-		assert.Equal(t, 2, myList.Size)
-	}
+	var pop int
 
-	if pop, ok := myList.Pop().(int); ok {
-		assert.Equal(t, 10, pop)
-		assert.Equal(t, 1, myList.Size)
-	}
+	pop = myList.Pop()
+	assert.Equal(t, 1, pop)
+	assert.Equal(t, 2, myList.Size())
 
-	if pop, ok := myList.Pop().(int); ok {
-		assert.Equal(t, 100, pop)
-		assert.Equal(t, 0, myList.Size)
-	}
+	pop = myList.Pop()
+	assert.Equal(t, 10, pop)
+	assert.Equal(t, 1, myList.Size())
 
+	pop = myList.Pop()
+	assert.Equal(t, 100, pop)
+	assert.Equal(t, 0, myList.Size())
+
+	if pop := myList.Pop(); !isZero(pop) {
+		t.FailNow()
+	}
 }
 
 func TestLinkedList_Del(t *testing.T) {
@@ -108,7 +108,7 @@ func TestLinkedList_Iter(t *testing.T) {
 }
 
 func BenchmarkLinkedList_Add(b *testing.B) {
-	myList := New()
+	myList := New[int]()
 
 	for i := 0; i < b.N; i++ {
 		myList.Add(i)
@@ -116,7 +116,7 @@ func BenchmarkLinkedList_Add(b *testing.B) {
 }
 
 func BenchmarkLinkedList_Add_Get(b *testing.B) {
-	myList := New()
+	myList := New[int]()
 
 	for i := 0; i < b.N; i++ {
 		myList.Add(i)
@@ -128,7 +128,7 @@ func BenchmarkLinkedList_Add_Get(b *testing.B) {
 }
 
 func BenchmarkLinkedList_Add_Size(b *testing.B) {
-	myList := New()
+	myList := New[int]()
 	var x int64
 
 	for i := 0; i < b.N; i++ {
@@ -141,7 +141,7 @@ func BenchmarkLinkedList_Add_Size(b *testing.B) {
 }
 
 func BenchmarkLinkedList_Add_Pop(b *testing.B) {
-	myList := New()
+	myList := New[int]()
 	var x int64
 
 	for i := 0; i < b.N; i++ {
@@ -149,14 +149,13 @@ func BenchmarkLinkedList_Add_Pop(b *testing.B) {
 	}
 
 	for i := 0; i < b.N; i++ {
-		if val, ok := myList.Pop().(int); ok {
-			x += int64(val)
-		}
+		val := myList.Pop()
+		x += int64(val)
 	}
 }
 
 func BenchmarkLinkedList_Add_Del(b *testing.B) {
-	myList := New()
+	myList := New[int]()
 
 	for i := 0; i < b.N; i++ {
 		myList.Add(i)
@@ -168,37 +167,31 @@ func BenchmarkLinkedList_Add_Del(b *testing.B) {
 }
 
 func BenchmarkLinkedList_Iter(b *testing.B) {
-	myList := New()
+	myList := New[int]()
 	var x int64
-	
-	for i:=0; i<10000; i++ {
+
+	for i := 0; i < 10000; i++ {
 		myList.Add(i)
 	}
 
-	for i := 0; i < b.N; i++ {
-
+	for j := 0; j < b.N; j++ {
 		for i := range myList.Iter() {
-			if val, ok := i.(int); ok {
-				x += int64(val)
-			}
+			x += int64(i)
 		}
 	}
 }
 
 func BenchmarkLinkedList_Iter2(b *testing.B) {
-	myList := New()
+	myList := New[int]()
 	var x int64
-	
-	for i:=0; i<10000; i++ {
+
+	for i := 0; i < 10000; i++ {
 		myList.Add(i)
 	}
 
-	for i := 0; i < b.N; i++ {
-
+	for j := 0; j < b.N; j++ {
 		for i := range myList.Iter2() {
-			if val, ok := i.(int); ok {
-				x += int64(val)
-			}
+			x += int64(i)
 		}
 	}
 }

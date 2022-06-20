@@ -230,3 +230,20 @@ func Map[T any, U any](list *LinkedList[T], f func(val T) U) *LinkedList[U] {
 
 	return newList
 }
+
+func Fold[T any](list *LinkedList[T], init T, f func(acc, val T) T) T {
+	var iter = list.newIter()
+
+	var reduced = init
+
+	for {
+		if iter.hasNext() {
+			nextVal := iter.next().value
+			reduced = f(reduced, nextVal)
+		} else {
+			break
+		}
+	}
+
+	return reduced
+}

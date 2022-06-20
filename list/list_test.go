@@ -119,7 +119,7 @@ func TestLinkedList_Filter(t *testing.T) {
 		list1 = append(list1, i)
 	}
 
-	assert.ElementsMatch(t, list1, []int{1,10})
+	assert.ElementsMatch(t, []int{1,10}, list1)
 
 	filteredList2 := Filter(myList, func(val int) bool {
 		return val > 10
@@ -130,7 +130,7 @@ func TestLinkedList_Filter(t *testing.T) {
 		list2 = append(list2, i)
 	}
 
-	assert.ElementsMatch(t, list2, []int{100})
+	assert.ElementsMatch(t, []int{100}, list2)
 }
 
 func TestLinkedList_Map(t *testing.T) {
@@ -145,7 +145,23 @@ func TestLinkedList_Map(t *testing.T) {
 		list = append(list, i)
 	}
 
-	assert.ElementsMatch(t, list, []int{2,11,101})
+	assert.ElementsMatch(t, []int{2,11,101}, list)
+}
+
+func TestLinkedList_Fold(t *testing.T) {
+	myList := setup()
+
+	reduced := Fold(myList, 0, func(acc, val int) int {
+		return acc + val
+	})
+
+	assert.Equal(t, 111, reduced)
+
+	reduced = Fold(myList, 1, func(acc, val int) int {
+		return acc * val
+	})
+
+	assert.Equal(t, 1000, reduced)
 }
 
 func BenchmarkLinkedList_Add(b *testing.B) {

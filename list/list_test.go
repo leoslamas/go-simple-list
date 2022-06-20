@@ -105,6 +105,27 @@ func TestLinkedList_Iter(t *testing.T) {
 		assert.Equal(t, x[counter], i)
 		counter++
 	}
+
+	emptyList := New[int]()
+	for i := range emptyList.Iter() {
+		t.Error("Should be unreachable ", i)
+	}
+}
+
+func TestLinkedList_Iter2(t *testing.T) {
+	myList := setup()
+	var counter = 0
+	var x = [3]int{1, 10, 100}
+
+	for i := range myList.Iter2() {
+		assert.Equal(t, x[counter], i)
+		counter++
+	}
+
+	emptyList := New[int]()
+	for i := range emptyList.Iter2() {
+		t.Error("Should be unreachable ", i)
+	}
 }
 
 func TestLinkedList_Filter(t *testing.T) {

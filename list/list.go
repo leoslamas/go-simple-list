@@ -232,6 +232,8 @@ func Map[T any, U any](list *LinkedList[T], f func(val T) U) *LinkedList[U] {
 	return newList
 }
 
+// Fold accumulates value starting with the first element and applying 'f' 
+// from left to right to current accumulator value and each element.
 func Fold[T any](list *LinkedList[T], init T, f func(acc, val T) T) T {
 	var iter = list.newIter()
 

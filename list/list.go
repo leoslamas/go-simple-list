@@ -1,5 +1,14 @@
 package list
 
+// workarounds for zero values of non nil types
+func zero[T any]() T {
+	return *new(T)
+}
+
+func isZero[T comparable](v T) bool {
+	return v == *new(T)
+}
+
 // LinkedList is a collection of linked nodes
 type LinkedList[T any] struct {
 	head *node[T]
@@ -14,26 +23,18 @@ type iterator[T any] struct {
 	node *node[T]
 }
 
-func zero[T any]() T {
-	return *new(T)
-}
-
-func isZero[T comparable](v T) bool {
-	return v == *new(T)
-}
-
 func (i *iterator[T]) hasNext() bool {
 	return i.node != nil && i.node.next != nil
 }
 
-func (i *iterator[T]) next() *node[T] {
+func (i *iterator[T]) next() T {
 	if i.node != nil {
 		n := i.node.next
 		i.node = i.node.next
-		return n
+		return n.value
 	}
 
-	return nil
+	return zero[T]()
 }
 
 func (list *LinkedList[T]) newIter() *iterator[T] {
@@ -170,7 +171,7 @@ func (list *LinkedList[T]) Iter() <-chan T {
 
 	for {
 		if iter.hasNext() {
-			channel <- iter.next().value
+			channel <- iter.next()
 		} else {
 			break
 		}
@@ -201,7 +202,7 @@ func Filter[T any](list *LinkedList[T], pred func(val T) bool) *LinkedList[T] {
 
 	for {
 		if iter.hasNext() {
-			nextVal := iter.next().value
+			nextVal := iter.next()
 			if pred(nextVal) {
 				newList.Add(nextVal)
 			}
@@ -221,7 +222,7 @@ func Map[T any, U any](list *LinkedList[T], f func(val T) U) *LinkedList[U] {
 
 	for {
 		if iter.hasNext() {
-			nextVal := iter.next().value
+			nextVal := iter.next()
 			newList.Add(f(nextVal))
 		} else {
 			break
@@ -238,7 +239,7 @@ func Fold[T any](list *LinkedList[T], init T, f func(acc, val T) T) T {
 
 	for {
 		if iter.hasNext() {
-			nextVal := iter.next().value
+			nextVal := iter.next()
 			reduced = f(reduced, nextVal)
 		} else {
 			break

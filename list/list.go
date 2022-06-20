@@ -193,7 +193,8 @@ func (list *LinkedList[T]) Iter2() <-chan T {
 	return channel
 }
 
-func (list *LinkedList[T]) Filter(pred func(val T) bool) *LinkedList[T] {
+// Filter filters the list by values for which 'pred' returns true
+func Filter[T any](list *LinkedList[T], pred func(val T) bool) *LinkedList[T] {
 	var newList = New[T]()
 
 	var iter = list.newIter()
@@ -212,8 +213,9 @@ func (list *LinkedList[T]) Filter(pred func(val T) bool) *LinkedList[T] {
 	return newList
 }
 
-func (list *LinkedList[T]) Map(f func(val T) T) *LinkedList[T] {
-	var newList = New[T]()
+// Map returns a new list applying 'f' to each value of 'list'
+func Map[T any, U any](list *LinkedList[T], f func(val T) U) *LinkedList[U] {
+	var newList = New[U]()
 
 	var iter = list.newIter()
 

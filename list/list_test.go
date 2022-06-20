@@ -110,7 +110,7 @@ func TestLinkedList_Iter(t *testing.T) {
 func TestLinkedList_Filter(t *testing.T) {
 	myList := setup()
 
-	filteredList1 := myList.Filter(func(val int) bool {
+	filteredList1 := Filter(myList, func(val int) bool {
 		return val < 100
 	})
 	
@@ -121,7 +121,7 @@ func TestLinkedList_Filter(t *testing.T) {
 
 	assert.ElementsMatch(t, list1, []int{1,10})
 
-	filteredList2 := myList.Filter(func(val int) bool {
+	filteredList2 := Filter(myList, func(val int) bool {
 		return val > 10
 	})
 	
@@ -131,6 +131,21 @@ func TestLinkedList_Filter(t *testing.T) {
 	}
 
 	assert.ElementsMatch(t, list2, []int{100})
+}
+
+func TestLinkedList_Map(t *testing.T) {
+	myList := setup()
+
+	mappedList := Map(myList, func(val int) int {
+		return val+1
+	})
+
+	list := []int{}
+	for i := range mappedList.Iter() {
+		list = append(list, i)
+	}
+
+	assert.ElementsMatch(t, list, []int{2,11,101})
 }
 
 func BenchmarkLinkedList_Add(b *testing.B) {

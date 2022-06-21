@@ -1,6 +1,7 @@
 package list
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -167,6 +168,17 @@ func TestLinkedList_Map(t *testing.T) {
 	}
 
 	assert.ElementsMatch(t, []int{2,11,101}, list)
+
+	mappedListToString := Map(myList, func(val int) string {
+		return fmt.Sprint(val)
+	})
+
+	stringList := []string{}
+	for i := range mappedListToString.Iter() {
+		stringList = append(stringList, string(i))
+	}
+
+	assert.ElementsMatch(t, []string{"1", "10", "100"}, stringList)
 }
 
 func TestLinkedList_Fold(t *testing.T) {
